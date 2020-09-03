@@ -92,7 +92,7 @@ def get_guessed_word(secret_word, letters_guessed):
         else:
           result.append("_")
     res = ''.join(result)
-    print(res)
+    return res 
 
 
 
@@ -111,6 +111,7 @@ def get_available_letters(letters_guessed):
         if l1 == l2:
           alphabet.remove(l1)
     res = ''.join(alphabet)
+    return res
 
 
     
@@ -142,6 +143,21 @@ def hangman(secret_word):
     
     Follows the other limitations detailed in the problem write-up.
     '''
+    guesses = 6
+    word = choose_word()
+
+    print(guesses)
+    print("I am thinking of a word that is " + len(word) *" letters long")
+    
+    
+    guess = input("Please guess a letter: ")
+
+    for step in game: 
+        print("You have " + guesses + " left.")
+        print("Availiable letters: " + get_available_letters())
+
+
+    pass
     
 
 
