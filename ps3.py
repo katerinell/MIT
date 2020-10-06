@@ -154,8 +154,12 @@ def deal_hand(n):
     num_vowels = int(math.ceil(n / 3))
 
     for i in range(num_vowels):
-        x = random.choice(VOWELS)
-        hand[x] = hand.get(x, 0) + 1
+        if range == 3:
+            hand[x] = hand.get(x, 0) + 1
+        else:
+            x = random.choice(VOWELS)
+            hand[x] = hand.get(x, 0) + 1
+        
     
     for i in range(num_vowels, n):    
         x = random.choice(CONSONANTS)
@@ -185,7 +189,15 @@ def update_hand(hand, word):
     returns: dictionary (string -> int)
     """
 
-    pass  # TO DO... Remove this line when you implement this function
+    word = list(word.lower())
+    new_hand = hand.copy()
+    for letter in word:
+        if letter in new_hand:
+            new_hand[letter] -= 1
+            if new_hand[letter] <= 0: 
+                new_hand.pop(letter)
+
+    return new_hand
 
 #
 # Problem #3: Test word validity
@@ -201,8 +213,38 @@ def is_valid_word(word, hand, word_list):
     word_list: list of lowercase strings
     returns: boolean
     """
+    new_hand = hand.copy()
+    list_word = list(word)
+    new_word = word.lower()
 
-    pass  # TO DO... Remove this line when you implement this function
+    if "*" in new_word:
+        for l in VOWELS:
+            temp = list()
+            t = str
+            for letter in new_word:
+                if letter == "*":
+                    temp.append(l)   
+                else:
+                    temp.append(letter)
+            t = "".join(temp)
+            if t in word_list:
+                return True
+            else:
+                continue
+        return False 
+    else:
+        if new_word in word_list:
+            for letter in new_word:
+                if letter in new_hand and new_hand[letter] > 0:
+                    new_hand[letter] -= 1
+                else:
+                    return False
+            return True
+        else: 
+            return False
+
+   
+
 
 #
 # Problem #5: Playing a hand
