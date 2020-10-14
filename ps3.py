@@ -154,7 +154,8 @@ def deal_hand(n):
     num_vowels = int(math.ceil(n / 3))
 
     for i in range(num_vowels):
-        if range == 3:
+        if i == 2:
+            x = str("*")
             hand[x] = hand.get(x, 0) + 1
         else:
             x = random.choice(VOWELS)
@@ -290,8 +291,9 @@ def play_hand(hand, word_list):
     """
 
     total_score = 0
-
     while calculate_handlen(hand) > 0:
+        print(" ")
+        print("Current hand: "),
         display_hand(hand)
         user = input("Please enter a word or '!!' to indicate you are done: ")
         if user == "!!":
@@ -424,29 +426,24 @@ def play_game(word_list):
     """
 
     num_hands = int(input("Enter total number of hands: "))
-    hand = deal_hand(HAND_SIZE)
-    print("Current hand: " + str(display_hand(hand)))
-    
-    subs = input("Would you like to substitute a letter? ")
-    if subs == "yes":
-        letter = input("Which letter would you like to replace: ")
-        substitute_hand(hand,letter)
-
-    while num_hands != 0:
-        total_hands = 0
+    total_hands = 0
+    while num_hands > 0:
+        hand = deal_hand(HAND_SIZE)
+        print("Current hand: "),
+        display_hand(hand)
+        subs = input("Would you like to substitute a letter? ")
+        if subs == "yes":
+            letter = input("Which letter would you like to replace: ")
+            hand = substitute_hand(hand,letter)
         hand_total = play_hand(hand,word_list)
-        play_hand(hand,word_list)
         total_hands += hand_total
         num_hands -= 1
         print("------------------")
         ask = input("Would you like to replay the hand? ")
-        if ask == "no":
-            print("Total for over all hands: " + str(total_hands))
-        else: 
+        if ask == "yes":
             play_hand(hand, word_list)
             total_hands += hand_total
-            num_hands -= 1
-            print("Total for over all hands: " + str(total_hands))
+    print("Total for over all hands: " + str(total_hands))
         
 
         
