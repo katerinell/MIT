@@ -2,6 +2,7 @@
 # Name: <your name here>
 # Collaborators:
 # Time Spent: x:xx
+from itertools import permutations
 
 def get_permutations(sequence):
     '''
@@ -23,18 +24,22 @@ def get_permutations(sequence):
     a different order than what is listed here.
     '''
 
-    pass #delete this line and replace with your code here
+    from itertools import permutations 
+
+    out = []
+    if len(sequence) == 1:
+        return sequence
+    else:
+        for i,let in enumerate(sequence):
+            for perm in get_permutations(sequence[:i] + sequence[i+1:]):
+                out += [let + perm]
+    return out
+
 
 if __name__ == '__main__':
-#    #EXAMPLE
-#    example_input = 'abc'
-#    print('Input:', example_input)
-#    print('Expected Output:', ['abc', 'acb', 'bac', 'bca', 'cab', 'cba'])
-#    print('Actual Output:', get_permutations(example_input))
-    
-#    # Put three example test cases here (for your sanity, limit your inputs
-#    to be three characters or fewer as you will have n! permutations for a 
-#    sequence of length n)
+    example_input = 'abc'
+    print('Input:', example_input)
+    print('Expected Output:', ['abc', 'acb', 'bac', 'bca', 'cab', 'cba'])
+    print('Actual Output:', get_permutations(example_input))
 
-    pass #delete this line and replace with your code here
 
