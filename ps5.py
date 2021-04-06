@@ -52,10 +52,29 @@ def process(url):
 # Data structure design
 #======================
 
-# Problem 1
+class NewsStory():
+    def __init__(self, guid, title, description, link, pubdate):
+        self.guid = guid
+        self.title = title
+        self.description = description
+        self.link = link
+        self.pubdate = pubdate
 
-# TODO: NewsStory
 
+    def get_guid(self):
+        return self.guid
+
+    def get_title(self):
+        return self.title
+
+    def get_description(self):
+        return self.description
+
+    def get_link(self):
+        return self.link
+
+    def get_pubdate(self):
+        return self.pubdate
 
 #======================
 # Triggers
@@ -74,35 +93,94 @@ class Trigger(object):
 
 # Problem 2
 # TODO: PhraseTrigger
-
+class PhraseTrigger(Trigger):
+    def __init__(self, phrase):
+        self.phrase = phrase
+    def is_phrase_in(self, text):
+        phrase = str.lower(self.phrase)
+        phrase_elements = phrase.split(' ')
+        clean_text = ''
+        for char in str.lower(text):
+            if char in string.punctuation:
+                clean_text += ' '
+            else:
+               clean_text += char
+        clean_text = clean_text.split(' ')
+        while '' in clean_text:
+            clean_text.remove('')
+        for word in phrase_elements:
+            if word in clean_text and phrase in ' '.join(clean_text):
+                result = True
+            else:
+                return False
+        return result
+        
+    
 # Problem 3
-# TODO: TitleTrigger
+class TitleTrigger(PhraseTrigger):
+    def __init__(self, phrase):
+        PhraseTrigger.__init__(self, phrase)
+    def evaluate(self, story):
+        return self.is_phrase_in(story.get_title())
+        
 
 # Problem 4
-# TODO: DescriptionTrigger
+
+class DescriptionTrigger(PhraseTrigger):
+    def __init__(self, phrase):
+        PhraseTrigger.__init__(self, phrase)
+    def evaluate(self, story):
+        return self.is_phrase_in(story.get_description())
 
 # TIME TRIGGERS
 
 # Problem 5
-# TODO: TimeTrigger
-# Constructor:
-#        Input: Time has to be in EST and in the format of "%d %b %Y %H:%M:%S".
-#        Convert time from string to a datetime before saving it as an attribute.
+class TimeTrigger(Trigger):
+    def __init__(self, time):
+        self.time = datetime.strptime(time, "%d %b %Y %H:%M:%S").replace(tzinfo=pytz.timezone("EST"))
 
 # Problem 6
-# TODO: BeforeTrigger and AfterTrigger
+class BeforeTrigger(TimeTrigger):
+    def __init__(self, time):
+        TimeTrigger.__init__(self,time)
+    def evaluate(self, story):
+        story_time = story.get_pubdate().replace(tzinfo=pytz.timezone('EST'))
+        return self.time > story_time
+
+
+class AfterTrigger(TimeTrigger):
+    def __init__(self, time):
+        TimeTrigger.__init__(self,time)
+    def evaluate(self, story):
+        story_time = story.get_pubdate().replace(tzinfo=pytz.timezone('EST'))
+        return self.time < story_time
 
 
 # COMPOSITE TRIGGERS
 
 # Problem 7
-# TODO: NotTrigger
+class NotTrigger(Trigger):
+    def __init__(self,trigger):
+        self.trigger = trigger
+    def evaluate(self, story):
+        return not self.trigger.evaluate(story)
 
 # Problem 8
-# TODO: AndTrigger
+class AndTrigger(Trigger):
+    def __init__(self,trigger1, trigger2):
+        self.trigger1 = trigger1
+        self.trigger2 = trigger2
+    def evaluate(self, story):
+        return self.trigger1.evaluate(story) and self.trigger2.evaluate(story)
 
 # Problem 9
-# TODO: OrTrigger
+class OrTrigger(Trigger):
+    def __init__(self,trigger1, trigger2):
+        self.trigger1 = trigger1
+        self.trigger2 = trigger2
+    def evaluate(self, story):
+        return self.trigger1.evaluate(story) or self.trigger2.evaluate(story)
+
 
 
 #======================
