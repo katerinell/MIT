@@ -194,10 +194,12 @@ def filter_stories(stories, triggerlist):
 
     Returns: a list of only the stories for which a trigger in triggerlist fires.
     """
-    # TODO: Problem 10
-    # This is a placeholder
-    # (we're just returning all the stories, with no filtering)
-    return stories
+    filter_stories = []
+    for trigger in triggerlist:
+        for story in stories:
+            if trigger.evaluate(story):
+                filter_stories.append(story)
+    return filter_stories
 
 
 
@@ -221,12 +223,29 @@ def read_trigger_config(filename):
         if not (len(line) == 0 or line.startswith('//')):
             lines.append(line)
 
-    # TODO: Problem 11
-    # line is the list of lines that you need to parse and for which you need
-    # to build triggers
-
-    print(lines) # for now, print it so you see what it contains!
-
+    
+    triggers = {}  
+    result = []    
+    for line in lines:
+        arguments = line.split(',')  
+        if arguments[0] == 'ADD':
+            for trigger_name in arguments[1:]:
+                result.append(triggers[trigger_name])
+        elif arguments[1] == 'TITLE':
+            triggers[arguments[0]] = TitleTrigger(arguments[2])
+        elif arguments[1] == 'DESCRIPTION':
+            triggers[arguments[0]] = DescriptionTrigger(arguments[2])
+        elif arguments[1] == 'AFTER':
+            triggers[arguments[0]] = AfterTrigger(arguments[2])
+        elif arguments[1] == 'BEFORE':
+            triggers[arguments[0]] = BeforeTrigger(arguments[2])
+        elif arguments[1] == 'NOT':
+            triggers[arguments[0]] = NotTrigger(triggers[arguments[2]])
+        elif arguments[1] == 'AND':
+            triggers[arguments[0]] = AndTrigger(triggers[arguments[2]], triggers[arguments[3]])
+        elif arguments[1] == 'OR':
+            triggers[arguments[0]] = OrTrigger(triggers[arguments[2]], triggers[arguments[3]])
+    return result
 
 
 SLEEPTIME = 120 #seconds -- how often we poll
@@ -243,7 +262,7 @@ def main_thread(master):
 
         # Problem 11
         # TODO: After implementing read_trigger_config, uncomment this line 
-        # triggerlist = read_trigger_config('triggers.txt')
+        triggerlist = read_trigger_config('triggers.txt')
         
         # HELPER CODE - you don't need to understand this!
         # Draws the popup window that displays the filtered stories
@@ -278,8 +297,7 @@ def main_thread(master):
             # Get stories from Google's Top Stories RSS news feed
             stories = process("http://news.google.com/news?output=rss")
 
-            # Get stories from Yahoo's Top Stories RSS news feed
-            stories.extend(process("http://news.yahoo.com/rss/topstories"))
+           
 
             stories = filter_stories(stories, triggerlist)
 
