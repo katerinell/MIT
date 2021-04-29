@@ -254,9 +254,9 @@ def main_thread(master):
     # A sample trigger list - you might need to change the phrases to correspond
     # to what is currently in the news
     try:
-        t1 = TitleTrigger("election")
-        t2 = DescriptionTrigger("Trump")
-        t3 = DescriptionTrigger("Clinton")
+        t1 = TitleTrigger("covid")
+        t2 = DescriptionTrigger("vaccine")
+        t3 = DescriptionTrigger("Moderna")
         t4 = AndTrigger(t2, t3)
         triggerlist = [t1, t4]
 
